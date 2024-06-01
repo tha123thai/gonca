@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Aniversário</title>
+    <style>
+
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f0f0f0;
+            background-image: url('balao.gif'), url('');
+            background-repeat: no-repeat, no-repeat;
+            background-position: 15px 500px, 900px 500px;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .fugitive-button {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+    <!-- Adicionando Fireworks.js -->
+    <script src="https://cdn.jsdelivr.net/npm/fireworks-js/dist/fireworks.js"></script>
+</head>
+<body>
+    <h1 id="title">Feliz Aniversário, PP!!!</h1>
+    <div id="content">
+        <button class="button" id="passButton">Próximo</button>
+    </div>
+
+    <script>
+        const messages = [
+            "Feliz Aniversário, PP! Isso é minha mensagem de parabéns!!!",
+            "Então... é mais um ano a eu ser a namorada mais incrível... e modesta, claro!",
+            "Ou, talvez... Mais um ano que você ainda me aguenta... Então... você merece um prêmio!",
+            "Imagina... O QUE VOCÊ MAIS DESEJA COMO PRÊMIO?",
+            "Ops, Não tinha como errar essa, né?",
+            "E talvez... Um dia...  Quer se casar comigo?",
+            "Tudo bem, eu respeito suas escolhas, amor hahaha!!",
+            "AGORA A SÉRIO, amor! Foi só uma brincadeira que venho preparando! Não está perfeito, mas já é alguma coisa! <br><br>Então, minha mensagem oficial de aniversário: Hoje, no seu aniversário, quero aproveitar para dizer o quanto você significa para mim. Te amo mais do que expresso, e sabes, e sou imensamente grata por ter você ao meu lado.<br><br>Obrigado por ser a pessoa incrível que você é, por sempre acreditar em mim e por me apoiar em todos os momentos. Seu carinho, compreensão e confiança me dão forças todos os dias.<br><br>Você me inspira a ser melhor! <br><br>Feliz aniversário, meu amor! Que seu dia seja tão maravilhoso quanto eu sou hahaha.<br><br>Com todo meu amor, Thai",
+            "Fim!"
+        ];
+
+        let currentStep = 0;
+        let cuAttempts = 0;
+        const titleElement = document.getElementById('title');
+        const contentElement = document.getElementById('content');
+
+        const nextStep = () => {
+            currentStep++;
+            if (currentStep < messages.length) {
+                updateContent();
+            }
+        };
+
+        const updateContent = () => {
+            if (currentStep === 3) {
+                titleElement.innerHTML = messages[currentStep];
+                contentElement.innerHTML = `
+                    <button class="button" id="prizeButton1">Thai já é o prêmio</button>
+                    <div class="fugitive-button" id="fugitiveButtonContainer">
+                        <button class="button" id="prizeButton2">cu</button>
+                    </div>
+                    <br>
+                   
+                `;
+                document.getElementById('prizeButton1').addEventListener('click', nextStep);
+                const prizeButton2 = document.getElementById('prizeButton2');
+                prizeButton2.addEventListener('mouseover', () => {
+                    if (cuAttempts < 3) {
+                        cuAttempts++;
+                        const x = Math.floor(Math.random() * (window.innerWidth - prizeButton2.offsetWidth));
+                        const y = Math.floor(Math.random() * (window.innerHeight - prizeButton2.offsetHeight));
+                        prizeButton2.style.transform = `translate(${x}px, ${y}px)`;
+                    } else {
+                        prizeButton2.style.display = 'none';
+                    }
+                });
+                prizeButton2.addEventListener('click', () => {
+                    if (cuAttempts < 3) {
+                        alert('Opção indisponível!');
+                    }
+                });
+                document.getElementById('passButton').addEventListener('click', nextStep);
+            } else if (currentStep === 5) {
+                titleElement.innerHTML = messages[currentStep];
+                contentElement.innerHTML = `
+                    <div class="fugitive-button">
+                        <button class="button" id="yesButton">Sim</button>
+                    </div>
+                    <button class="button" id="noButton">Não</button>
+                `;
+                const yesButton = document.getElementById('yesButton');
+                yesButton.addEventListener('mouseover', () => {
+                    const x = Math.floor(Math.random() * (window.innerWidth - yesButton.offsetWidth));
+                    const y = Math.floor(Math.random() * (window.innerHeight - yesButton.offsetHeight));
+                    yesButton.style.transform = `translate(${x}px, ${y}px)`;
+                });
+                document.getElementById('noButton').addEventListener('click', () => {
+                    titleElement.innerHTML = messages[6];
+                    contentElement.innerHTML = `<button class="button" id="passButton">Passar</button>`;
+                    document.getElementById('passButton').addEventListener('click', nextStep); // Adicione isso para apenas um clique necessário
+                    // Remova o evento de clique do botão 'Passar' após ser clicado uma vez
+                    document.getElementById('noButton').removeEventListener('click');
+                });
+            } else {
+                titleElement.innerHTML = messages[currentStep];
+                if (currentStep === messages.length - 1) {
+                    // Última mensagem, sem botão "Passar"
+                    contentElement.innerHTML = "";
+                    // Trigger fireworks for the final message
+                    launchFireworks();
+                } else {
+                    contentElement.innerHTML = `<br><button class="button" id="passButton">Passar</button>`;
+                    document.getElementById('passButton').addEventListener('click', nextStep);
+                }
+            }
+        };
+
+        const launchFireworks = () => {
+            const fireworks = new Fireworks({
+                target: document.body,
+                hue: {
+                    min: 0,
+                    max: 360
+                },
+                delay: {
+                    min: 15,
+                    max: 30
+                },
+                rocketsPoint: 50,
+                speed: 2,
+                acceleration: 1.05,
+                friction: 0.98,
+                gravity: 1.5,
+                particles: 50,
+                trace: 3,
+                explosion: 5,
+                boundaries: {
+                    top: 0,
+                    bottom: window.innerHeight,
+                    left: 0,
+                    right: window.innerWidth
+                },
+                sound: {
+                    enable: true,
+                    list: [
+                        'explosion0.mp3',
+                        'explosion1.mp3',
+                        'explosion2.mp3'
+                    ],
+                    min: 4,
+                    max: 8
+                }
+            });
+
+            fireworks.start();
+            setTimeout(() => fireworks.stop(), 10000); // Stop after 10 seconds
+        };
+
+        document.getElementById('passButton').addEventListener('click', nextStep);
+        updateContent();
+    </script>
+</body>
+</html>
